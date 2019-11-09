@@ -2,7 +2,7 @@ CXX?=c++
 SDL2FLAGS=$(shell pkg-config sdl2 --cflags --libs)
 CXXFLAGS?=-std=c++11 -Wall -pedantic -Werror -Wshadow -Wstrict-aliasing -Wstrict-overflow
 
-.PHONY: all msg clean fullclean
+.PHONY: all clean
 
 all: main
 
