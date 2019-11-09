@@ -13,7 +13,7 @@ public:
 class Render
 {
 public:
-    Render(SDL_Renderer *renderer) : renderer(renderer){};
+    Render(SDL_Renderer *ren) : renderer(ren){};
     void update();
     void addRenderable(Renderable *renderable);
 

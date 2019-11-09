@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "unistd.h"
 #include "render.h"
+#include "scene.h"
 
 struct Sprite
 {
@@ -68,12 +69,18 @@ int main()
     }
     sprite.texture = tex;
 
+    Render render(ren);
+    Scene scene(&render);
 
-
+    Uint32 lastmillis = SDL_GetTicks();
     while (true)
     {
+        delta = SDL_GetTicks() - lastmillis;
+        scene.update();
         update(&sprite);
         render(ren, &sprite);
+
+        lastmillis = SDL_GetTicks();
     }
 
     SDL_DestroyTexture(tex);

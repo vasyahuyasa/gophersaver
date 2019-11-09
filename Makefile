@@ -6,10 +6,10 @@ CXXFLAGS?=-std=c++11 -Wall -pedantic -Werror -Wshadow -Wstrict-aliasing -Wstrict
 
 all: main
 
-main: src/main.c
+main: src/main.cpp
 	${CXX} ${CXXFLAGS} -O3 -o $@ $< ${SDL2FLAGS}
 
-debug: src/main.c
+debug: src/main.cpp
 	${CXX} ${CXXFLAGS} -O0 -g -o main $< ${SDL2FLAGS}
 
 clean:
