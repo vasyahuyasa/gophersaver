@@ -1,20 +1,20 @@
 #ifndef __RENDER_H__
 #define __RENDER_H__
 
-#include "SDL2/SDL.h"
+#include "gophersaver.h"
 #include <list>
 
 class Renderable
 {
 public:
-    virtual void render(SDL_Renderer *ren) = 0;
+    virtual void draw(SDL_Renderer *ren) = 0;
 };
 
 class Render
 {
 public:
     Render(SDL_Renderer *ren) : renderer(ren){};
-    void update();
+    void draw();
     void addRenderable(Renderable *renderable);
 
 private:

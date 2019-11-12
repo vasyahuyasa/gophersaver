@@ -1,15 +1,8 @@
-#include "SDL2/SDL.h"
+#include "gophersaver.h"
 #include "stdio.h"
 #include "unistd.h"
-#include "render.h"
-#include "scene.h"
 
-struct Sprite
-{
-    SDL_Texture *texture;
-    int x, y;
-};
-
+/*
 void update(Sprite *sprite)
 {
     SDL_PumpEvents();
@@ -18,7 +11,9 @@ void update(Sprite *sprite)
         exit(EXIT_SUCCESS);
     }
 }
+*/
 
+/*
 void render(SDL_Renderer *ren, Sprite *sprite)
 {
     SDL_Rect dst = {sprite->x, sprite->y, 100, 100};
@@ -28,18 +23,20 @@ void render(SDL_Renderer *ren, Sprite *sprite)
     SDL_RenderPresent(ren);
     SDL_Delay(10);
 }
+*/
+
+const int width = 1500;
+const int height = 1000;
 
 int main()
 {
-    Sprite sprite;
-
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
         printf("SDL_Init Error: %s\n", SDL_GetError());
         return EXIT_FAILURE;
     }
 
-    SDL_Window *win = SDL_CreateWindow("Hello World!", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+    SDL_Window *win = SDL_CreateWindow("Hello World!", 100, 100, width, height, SDL_WINDOW_SHOWN);
     if (win == nullptr)
     {
         printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
@@ -67,20 +64,21 @@ int main()
         printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
         return EXIT_FAILURE;
     }
-    sprite.texture = tex;
 
-    Render render(ren);
-    Scene scene(&render);
+    Physics *physics = new Physics(width, height);
+    Render *render = new Render(ren);
+    Scene *scene = new Scene(render, physics);
 
-    Uint32 lastmillis = SDL_GetTicks();
-    while (true)
+    FlyObj *fly = new FlyObj(tex, 100, 100, SDL_FPoint{0.5, 0.5}, SDL_FPoint{100, 100});
+    render->addRenderable(fly);
+    physics->addPhysent(fly);
+
+    bool running = true;
+
+    while (running)
     {
-        delta = SDL_GetTicks() - lastmillis;
-        scene.update();
-        update(&sprite);
-        render(ren, &sprite);
-
-        lastmillis = SDL_GetTicks();
+        running = scene->update();
+        SDL_Delay(10);
     }
 
     SDL_DestroyTexture(tex);

@@ -2,14 +2,23 @@
 #define __SCENE_H__
 
 #include "render.h"
+#include "physics.h"
 
 class Scene
 {
 public:
-    Scene(Render *render) : render(render){};
-    void update(int deltamillis);
+    Scene(Render *render, Physics *physics) : ren(render), phys(physics), lastmillis(SDL_GetTicks()){};
+    bool update();
 
 private:
-    Render *render;
+    Render *ren;
+    Physics *phys;
+    Uint32 lastmillis;
+    int mouseX;
+    int mouseY;
+    Uint32 mouseInputMask;
+
+    void readMouseState();
+    bool canContinue();
 };
 #endif

@@ -1,11 +1,15 @@
-#include "render.h"
+#include "gophersaver.h"
 
-void Render::update()
+void Render::draw()
 {
+    SDL_RenderClear(renderer);
+
     for (auto renderable : renderables)
     {
-        renderable->render(renderer);
+        renderable->draw(renderer);
     }
+
+    SDL_RenderPresent(renderer);
 }
 
 void Render::addRenderable(Renderable *renderable)

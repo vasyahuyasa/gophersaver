@@ -1,10 +1,32 @@
-#include "render.h"
+#include "gophersaver.h"
+#include "stdio.h"
 
-class Scene
+bool Scene::update()
 {
-public:
-    Scene(Render *render) : render(render){};
+    Uint32 deltamillis =  - this->lastmillis;
 
-private:
-    Render *render;
-};
+    this->readMouseState();
+
+    if (!this->canContinue())
+    {
+        return false;
+    }
+
+    this->phys->update(deltamillis);
+    this->ren->draw();
+
+    this->lastmillis = SDL_GetTicks();
+
+    return true;
+}
+
+void Scene::readMouseState()
+{
+    SDL_PumpEvents();
+    this->mouseInputMask = SDL_GetMouseState(&this->mouseX, &this->mouseY);
+}
+
+bool Scene::canContinue()
+{
+    return (this->mouseInputMask & SDL_BUTTON_LMASK) == 0;
+}
