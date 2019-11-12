@@ -8,9 +8,15 @@ SOURCES=\
 	src/render.cpp \
 	src/physics.cpp \
 	src/main.cpp
-
+RESOURCS=\
+	assets/astro-gopher-1.png \
+	assets/astro-gopher-2.png \
+	assets/astro-gopher-3.png \
+	assets/astro-gopher-4.png
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=gophersaver
+
+.PHONY: all clean assets
 
 all: $(EXECUTABLE)
 	
@@ -22,3 +28,6 @@ $(EXECUTABLE): $(OBJECTS)
 
 clean:
 	rm src/*.o
+
+assets: 
+	for img in $(RESOURCS); do xxd -i $$img > $$img.c; done
