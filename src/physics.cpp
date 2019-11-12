@@ -20,24 +20,29 @@ void Physics::updateVelocity(Physent *physent)
 
     if ((physent->pos.x - (physent->w / 2)) < 0)
     {
+        printf("X below 0: x = %f new = %d\n", physent->pos.x - (physent->w / 2), physent->w / 2);
         physent->pos.x = physent->w / 2;
         inverseX = physent->vel.x < 0;
+        
     }
 
     if ((physent->pos.x + (physent->w / 2)) > this->w)
     {
-        physent->pos.x = this->h - (physent->w / 2);
+        printf("X above w: x = %f new = %d\n", (physent->pos.x + (physent->w / 2)), this->h - (physent->w / 2));
+        physent->pos.x = this->w - (physent->w / 2);
         inverseX = physent->vel.x > 0;
     }
 
     if ((physent->pos.y - (physent->h / 2)) < 0)
     {
+        printf("Y below 0: x = %f new = %d\n", physent->pos.y - (physent->h / 2),  physent->h / 2);
         physent->pos.y = physent->h / 2;
         inverseY =  physent->vel.y < 0;
     }
 
-    if ((physent->pos.y + (physent->h / 2)) > this->w)
+    if ((physent->pos.y + (physent->h / 2)) > this->h)
     {
+        printf("Y above h: h = %f new = %d\n", physent->pos.y + (physent->h / 2),  this->h - (physent->h / 2));
         physent->pos.y = this->h - (physent->h / 2);
         inverseY = physent->vel.y > 0;
     }

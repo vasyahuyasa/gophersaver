@@ -3,7 +3,7 @@
 
 bool Scene::update()
 {
-    Uint32 deltamillis =  - this->lastmillis;
+    Uint32 deltamillis = SDL_GetTicks() - this->lastmillis;
 
     this->readMouseState();
 

@@ -69,9 +69,23 @@ int main()
     Render *render = new Render(ren);
     Scene *scene = new Scene(render, physics);
 
-    FlyObj *fly = new FlyObj(tex, 100, 100, SDL_FPoint{0.5, 0.5}, SDL_FPoint{100, 100});
-    render->addRenderable(fly);
-    physics->addPhysent(fly);
+    FlyObj *fly1 = new FlyObj(tex, 100, 100, SDL_FPoint{500, 500}, SDL_FPoint{100, 100});
+    FlyObj *fly2 = new FlyObj(tex, 100, 100, SDL_FPoint{400, -500}, SDL_FPoint{200, 200});
+    FlyObj *fly3 = new FlyObj(tex, 100, 100, SDL_FPoint{300, 700}, SDL_FPoint{300, 300});
+    FlyObj *fly4 = new FlyObj(tex, 100, 100, SDL_FPoint{-500,-3400}, SDL_FPoint{400, 400});
+    FlyObj *fly5 = new FlyObj(tex, 100, 100, SDL_FPoint{100, -200}, SDL_FPoint{500, 500});
+
+    render->addRenderable(fly1);
+    render->addRenderable(fly2);
+    render->addRenderable(fly3);
+    render->addRenderable(fly4);
+    render->addRenderable(fly5);
+
+    physics->addPhysent(fly1);
+    physics->addPhysent(fly2);
+    physics->addPhysent(fly3);
+    physics->addPhysent(fly4);
+    physics->addPhysent(fly5);
 
     bool running = true;
 
