@@ -4,7 +4,7 @@
 #include "gophersaver.h"
 #include <list>
 
-class Renderable
+class Drawable
 {
 public:
     virtual void draw(SDL_Renderer *ren) = 0;
@@ -15,10 +15,10 @@ class Render
 public:
     Render(SDL_Renderer *ren) : renderer(ren){};
     void draw();
-    void addRenderable(Renderable *renderable);
+    void addRenderable(Drawable *renderable);
 
 private:
-    std::list<Renderable *> renderables;
+    std::list<Drawable *> drawables;
     SDL_Renderer *renderer;
 };
 #endif

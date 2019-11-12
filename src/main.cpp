@@ -2,29 +2,6 @@
 #include "stdio.h"
 #include "unistd.h"
 
-/*
-void update(Sprite *sprite)
-{
-    SDL_PumpEvents();
-    if (SDL_GetMouseState(&sprite->x, &sprite->y) & SDL_BUTTON(SDL_BUTTON_LEFT))
-    {
-        exit(EXIT_SUCCESS);
-    }
-}
-*/
-
-/*
-void render(SDL_Renderer *ren, Sprite *sprite)
-{
-    SDL_Rect dst = {sprite->x, sprite->y, 100, 100};
-
-    SDL_RenderClear(ren);
-    SDL_RenderCopy(ren, sprite->texture, nullptr, &dst);
-    SDL_RenderPresent(ren);
-    SDL_Delay(10);
-}
-*/
-
 const int width = 1500;
 const int height = 1000;
 
@@ -69,11 +46,11 @@ int main()
     Render *render = new Render(ren);
     Scene *scene = new Scene(render, physics);
 
-    FlyObj *fly1 = new FlyObj(tex, 100, 100, SDL_FPoint{500, 500}, SDL_FPoint{100, 100});
-    FlyObj *fly2 = new FlyObj(tex, 100, 100, SDL_FPoint{400, -500}, SDL_FPoint{200, 200});
-    FlyObj *fly3 = new FlyObj(tex, 100, 100, SDL_FPoint{300, 700}, SDL_FPoint{300, 300});
-    FlyObj *fly4 = new FlyObj(tex, 100, 100, SDL_FPoint{-500,-3400}, SDL_FPoint{400, 400});
-    FlyObj *fly5 = new FlyObj(tex, 100, 100, SDL_FPoint{100, -200}, SDL_FPoint{500, 500});
+    FlyObj *fly1 = new FlyObj(tex, 100, 100, SDL_FPoint{500, 500}, SDL_FPoint{100, 100}, 30);
+    FlyObj *fly2 = new FlyObj(tex, 100, 100, SDL_FPoint{400, -500}, SDL_FPoint{200, 200}, 50);
+    FlyObj *fly3 = new FlyObj(tex, 100, 100, SDL_FPoint{300, 700}, SDL_FPoint{300, 300}, 150);
+    FlyObj *fly4 = new FlyObj(tex, 100, 100, SDL_FPoint{-500,-3400}, SDL_FPoint{400, 400}, 50);
+    FlyObj *fly5 = new FlyObj(tex, 100, 100, SDL_FPoint{100, -200}, SDL_FPoint{500, 500}, 50);
 
     render->addRenderable(fly1);
     render->addRenderable(fly2);

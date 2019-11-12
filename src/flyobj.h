@@ -5,14 +5,19 @@
 #include "render.h"
 #include "physics.h"
 
-class FlyObj : public Renderable, public Physent
+class FlyObj : public Drawable, public Physent
 {
 private:
     SDL_Texture *tex;
     int halfW, halfH;
+    double angle;
+    double rotate; // degrees per second
+
+    void updatePos(Uint32 deltamillis);
+    void updateAngle(Uint32 deltamillis);
 
 public:
-    FlyObj(SDL_Texture *texture, int width, int height, SDL_FPoint velocity, SDL_FPoint startPos) : tex(texture), halfW(width / 2), halfH(height / 2)
+    FlyObj(SDL_Texture *texture, int width, int height, SDL_FPoint velocity, SDL_FPoint startPos, double rot) : tex(texture), halfW(width / 2), halfH(height / 2), angle(0), rotate(rot)
     {
         this->pos = startPos;
         this->w = width;

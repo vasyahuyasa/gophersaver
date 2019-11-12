@@ -1,21 +1,36 @@
 #include "gophersaver.h"
 #include "stdio.h"
+#include <cmath>
 
 void FlyObj::draw(SDL_Renderer *ren)
 {
     SDL_Rect dst = {(int)(this->pos.x - this->halfW), (int)(this->pos.y - this->halfH), this->w, this->h};
-    SDL_RenderCopy(ren, this->tex, nullptr, &dst);
-
-    printf("draw %f %f\n", pos.x, pos.y);
+    SDL_RenderCopyEx(ren, this->tex, nullptr, &dst, this->angle, nullptr, SDL_FLIP_NONE);
 }
 
 void FlyObj::update(Uint32 deltamillis)
 {
-    printf("mul velx=%f delta=%d div=%f result=%f\n", this->vel.x, deltamillis, ((float)deltamillis / 1000.0), this->vel.x * ((float)deltamillis / 1000.0));
+    this->updatePos(deltamillis);
+    this->updateAngle(deltamillis);
+}
 
-    printf("vel: %f %f before: %f %f ",this->vel.x, this->vel.y, this->pos.x, this->pos.y);
-    this->pos.x += this->vel.x * ((float)deltamillis / 1000.0);
-    this->pos.y += this->vel.y * ((float)deltamillis / 1000.0);
-    
-    printf("after: %f %f\n", this->pos.x, this->pos.y);
+void FlyObj::updatePos(Uint32 deltamillis)
+{
+    this->pos.x += this->vel.x * (float)deltamillis / 1000.0;
+    this->pos.y += this->vel.y * (float)deltamillis / 1000.0;
+}
+
+void FlyObj::updateAngle(Uint32 deltamillis)
+{
+    this->angle += this->rotate * (float)deltamillis / 1000.0;
+
+    if (this->angle < 0)
+    {
+        this->angle = 360.0f - this->angle;
+    }
+
+    if (this->angle >= 360.0f)
+    {
+        this->angle = this->angle - 360.0f;
+    }
 }

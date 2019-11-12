@@ -4,15 +4,15 @@ void Render::draw()
 {
     SDL_RenderClear(renderer);
 
-    for (auto renderable : renderables)
+    for (auto drawable : drawables)
     {
-        renderable->draw(renderer);
+        drawable->draw(renderer);
     }
 
     SDL_RenderPresent(renderer);
 }
 
-void Render::addRenderable(Renderable *renderable)
+void Render::addRenderable(Drawable *drawable)
 {
-    renderables.push_back(renderable);
+    drawables.push_back(drawable);
 }
