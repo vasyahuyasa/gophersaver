@@ -1,19 +1,75 @@
 #include "gophersaver.h"
 #include "stdio.h"
 #include "unistd.h"
+#include "assets/assets.h"
+#include <list>
+#include <tuple>
+#include <ctime>
+#include <string>
 
 const int width = 1500;
 const int height = 1000;
+const int minVelocity = -500;
+const int maxVelocity = 500;
+const int minRotate = -180;
+const int maxRotate = 180;
+
+std::list<FlyObj *> loadEntitiesForRender(SDL_Renderer *render)
+{
+    std::list<FlyObj *> entities;
+
+    // list of images
+    for (auto &&img : {
+             std::tuple<unsigned char *, unsigned int>{src_assets_astro_gopher_1_png, src_assets_astro_gopher_1_png_len},
+             std::tuple<unsigned char *, unsigned int>{src_assets_astro_gopher_2_png, src_assets_astro_gopher_2_png_len},
+             std::tuple<unsigned char *, unsigned int>{src_assets_astro_gopher_3_png, src_assets_astro_gopher_3_png_len},
+             std::tuple<unsigned char *, unsigned int>{src_assets_astro_gopher_4_png, src_assets_astro_gopher_4_png_len}})
+    {
+        SDL_RWops *rw = SDL_RWFromConstMem(std::get<0>(img), std::get<1>(img));
+        if (rw == nullptr)
+        {
+            throw "Can not load from const memory: " + std::string(SDL_GetError());
+        }
+
+        SDL_Surface *surface = IMG_LoadPNG_RW(rw);
+        if (surface == nullptr)
+        {
+            throw "Can not load image from memory: " + std::string(SDL_GetError());
+        }
+
+        SDL_Texture *tex = SDL_CreateTextureFromSurface(render, surface);
+        if (surface == nullptr)
+        {
+            throw "Can not crete texture from surface: " + std::string(SDL_GetError());
+        }
+
+        SDL_FPoint velocity{(float)(minVelocity + std::rand() % (maxVelocity - minVelocity)), (float)(minVelocity + std::rand() % (maxVelocity - minVelocity))};
+        SDL_FPoint startPos{(float)(std::rand() % width), (float)(std::rand() % height)};
+        double rotate = minRotate + std::rand() % (maxRotate - minRotate);
+
+        entities.push_back(new FlyObj(tex, surface->w, surface->w, velocity, startPos, rotate));
+
+        SDL_FreeSurface(surface);
+
+        if (SDL_RWclose(rw) != 0)
+        {
+            throw "Can not close SDL_RWops: " + std::string(SDL_GetError());
+        }
+    }
+    return entities;
+}
 
 int main()
 {
+    std::srand(unsigned(std::time(0)));
+
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
         printf("SDL_Init Error: %s\n", SDL_GetError());
         return EXIT_FAILURE;
     }
 
-    SDL_Window *win = SDL_CreateWindow("Hello World!", 100, 100, width, height, SDL_WINDOW_SHOWN);
+    SDL_Window *win = SDL_CreateWindow("Gophersaver", 0, 0, width, height, SDL_WINDOW_FULLSCREEN_DESKTOP);
     if (win == nullptr)
     {
         printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
@@ -27,42 +83,15 @@ int main()
         return EXIT_FAILURE;
     }
 
-    SDL_Surface *bmp = SDL_LoadBMP("grumpy-cat.bmp");
-    if (bmp == nullptr)
-    {
-        printf("SDL_LoadBMP Error: %s\n", SDL_GetError());
-        return EXIT_FAILURE;
-    }
-
-    SDL_Texture *tex = SDL_CreateTextureFromSurface(ren, bmp);
-    SDL_FreeSurface(bmp);
-    if (tex == nullptr)
-    {
-        printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
-        return EXIT_FAILURE;
-    }
-
     Physics *physics = new Physics(width, height);
     Render *render = new Render(ren);
     Scene *scene = new Scene(render, physics);
 
-    FlyObj *fly1 = new FlyObj(tex, 100, 100, SDL_FPoint{500, 500}, SDL_FPoint{100, 100}, 30);
-    FlyObj *fly2 = new FlyObj(tex, 100, 100, SDL_FPoint{400, -500}, SDL_FPoint{200, 200}, 50);
-    FlyObj *fly3 = new FlyObj(tex, 100, 100, SDL_FPoint{300, 700}, SDL_FPoint{300, 300}, 150);
-    FlyObj *fly4 = new FlyObj(tex, 100, 100, SDL_FPoint{-500,-3400}, SDL_FPoint{400, 400}, 50);
-    FlyObj *fly5 = new FlyObj(tex, 100, 100, SDL_FPoint{100, -200}, SDL_FPoint{500, 500}, 50);
-
-    render->addRenderable(fly1);
-    render->addRenderable(fly2);
-    render->addRenderable(fly3);
-    render->addRenderable(fly4);
-    render->addRenderable(fly5);
-
-    physics->addPhysent(fly1);
-    physics->addPhysent(fly2);
-    physics->addPhysent(fly3);
-    physics->addPhysent(fly4);
-    physics->addPhysent(fly5);
+    for (auto entry : loadEntitiesForRender(ren))
+    {
+        render->addRenderable(entry);
+        physics->addPhysent(entry);
+    }
 
     bool running = true;
 
@@ -72,7 +101,6 @@ int main()
         SDL_Delay(10);
     }
 
-    SDL_DestroyTexture(tex);
     SDL_DestroyRenderer(ren);
     SDL_DestroyWindow(win);
     SDL_Quit();

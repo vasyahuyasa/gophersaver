@@ -6,7 +6,8 @@ Gophersaver is screensaver programm with flying gophers in sapce.
 
 ## Requipments
 
-SDL2 lib
+* SDL2
+* SDL_image 2.0
 
 ## Build and install
 
