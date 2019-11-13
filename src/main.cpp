@@ -7,14 +7,12 @@
 #include <ctime>
 #include <string>
 
-const int width = 1500;
-const int height = 1000;
 const int minVelocity = -500;
 const int maxVelocity = 500;
 const int minRotate = -180;
 const int maxRotate = 180;
 
-std::list<FlyObj *> loadEntitiesForRender(SDL_Renderer *render)
+std::list<FlyObj *> loadEntitiesForRender(SDL_Renderer *render, int screenWidth, int screenHeight)
 {
     std::list<FlyObj *> entities;
 
@@ -44,7 +42,7 @@ std::list<FlyObj *> loadEntitiesForRender(SDL_Renderer *render)
         }
 
         SDL_FPoint velocity{(float)(minVelocity + std::rand() % (maxVelocity - minVelocity)), (float)(minVelocity + std::rand() % (maxVelocity - minVelocity))};
-        SDL_FPoint startPos{(float)(std::rand() % width), (float)(std::rand() % height)};
+        SDL_FPoint startPos{(float)(std::rand() % screenWidth), (float)(std::rand() % screenHeight)};
         double rotate = minRotate + std::rand() % (maxRotate - minRotate);
 
         entities.push_back(new FlyObj(tex, surface->w, surface->w, velocity, startPos, rotate));
@@ -69,7 +67,16 @@ int main()
         return EXIT_FAILURE;
     }
 
-    SDL_Window *win = SDL_CreateWindow("Gophersaver", 0, 0, width, height, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    SDL_DisplayMode displayMode;
+    if(SDL_GetCurrentDisplayMode(0, &displayMode) != 0) {
+        printf("SDL_GetCurrentDisplayMode Error: %s\n", SDL_GetError());
+        return EXIT_FAILURE;
+    }
+    auto screenWidth = displayMode.w;
+    auto screenHeight = displayMode.h;
+
+
+    SDL_Window *win = SDL_CreateWindow("Gophersaver", 0, 0, screenWidth, screenHeight, SDL_WINDOW_FULLSCREEN_DESKTOP);
     if (win == nullptr)
     {
         printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
@@ -83,11 +90,11 @@ int main()
         return EXIT_FAILURE;
     }
 
-    Physics *physics = new Physics(width, height);
+    Physics *physics = new Physics(screenWidth, screenHeight);
     Render *render = new Render(ren);
     Scene *scene = new Scene(render, physics);
 
-    for (auto entry : loadEntitiesForRender(ren))
+    for (auto entry : loadEntitiesForRender(ren, screenWidth, screenHeight))
     {
         render->addRenderable(entry);
         physics->addPhysent(entry);
