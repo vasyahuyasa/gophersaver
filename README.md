@@ -4,6 +4,8 @@
 
 Gophersaver is screensaver programm with flying gophers in sapce.
 
+![gophersave screenshot](images/screen_1.jpg)
+
 ## Requipments
 
 * SDL2
