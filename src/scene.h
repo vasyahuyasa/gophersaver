@@ -4,6 +4,8 @@
 #include "render.h"
 #include "physics.h"
 
+namespace gopher
+{
 class Scene
 {
 public:
@@ -21,4 +23,5 @@ private:
     void readMouseState();
     bool canContinue();
 };
+} // namespace gopher
 #endif

@@ -4,6 +4,8 @@
 #include "SDL2/SDL.h"
 #include "render.h"
 
+namespace gopher
+{
 class StaticSprite : Drawable
 {
 private:
@@ -16,5 +18,5 @@ public:
 
     void draw(SDL_Renderer *ren) override;
 };
-
+} // namespace gopher
 #endif

@@ -4,6 +4,8 @@
 #include "gophersaver.h"
 #include <list>
 
+namespace gopher
+{
 class Drawable
 {
 public:
@@ -21,4 +23,6 @@ private:
     std::list<Drawable *> drawables;
     SDL_Renderer *renderer;
 };
+} // namespace gopher
+
 #endif

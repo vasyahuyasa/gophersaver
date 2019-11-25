@@ -4,6 +4,8 @@
 #include "SDL2/SDL.h"
 #include <list>
 
+namespace gopher
+{
 class Physent
 {
 public:
@@ -28,5 +30,6 @@ public:
     void update(Uint32 deltamillis);
     void addPhysent(Physent *physent);
 };
+} // namespace gopher
 
 #endif

@@ -5,6 +5,8 @@
 #include "render.h"
 #include "physics.h"
 
+namespace gopher
+{
 class FlyObj : public Drawable, public Physent
 {
 private:
@@ -28,5 +30,5 @@ public:
     void draw(SDL_Renderer *ren) override;
     void update(Uint32 deltamillis) override;
 };
-
+} // namespace gopher
 #endif

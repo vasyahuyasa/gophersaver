@@ -1,5 +1,6 @@
 CXX?=c++
-CXXFLAGS=-std=c++11 -Wall -pedantic -Werror -Wshadow -Wstrict-aliasing -Wstrict-overflow
+CXXFLAGS=-std=c++11 -Wall -pedantic -Werror -Wshadow -Wstrict-aliasing -Wstrict-overflow -O0 
+CXXFLAGS+=-lX11
 CXXFLAGS+=$(shell pkg-config sdl2 --cflags --libs)
 CXXFLAGS+=$(shell pkg-config SDL2_image --cflags --libs)
 LDFLAGS=

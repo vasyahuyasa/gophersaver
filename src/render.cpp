@@ -1,5 +1,6 @@
 #include "gophersaver.h"
-
+namespace gopher
+{
 void Render::draw()
 {
     SDL_RenderClear(renderer);
@@ -16,3 +17,4 @@ void Render::addRenderable(Drawable *drawable)
 {
     drawables.push_back(drawable);
 }
+} // namespace gopher

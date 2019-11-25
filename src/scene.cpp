@@ -1,6 +1,8 @@
 #include "gophersaver.h"
 #include "stdio.h"
 
+namespace gopher
+{
 bool Scene::update()
 {
     Uint32 deltamillis = SDL_GetTicks() - this->lastmillis;
@@ -29,4 +31,5 @@ void Scene::readMouseState()
 bool Scene::canContinue()
 {
     return (this->mouseInputMask & SDL_BUTTON_LMASK) == 0;
+}
 }

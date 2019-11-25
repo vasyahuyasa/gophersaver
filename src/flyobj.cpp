@@ -2,6 +2,9 @@
 #include "stdio.h"
 #include <cmath>
 
+namespace gopher
+{
+
 void FlyObj::draw(SDL_Renderer *ren)
 {
     SDL_Rect dst = {(int)(this->pos.x - this->halfW), (int)(this->pos.y - this->halfH), this->w, this->h};
@@ -34,3 +37,4 @@ void FlyObj::updateAngle(Uint32 deltamillis)
         this->angle = this->angle - 360.0f;
     }
 }
+} // namespace gopher

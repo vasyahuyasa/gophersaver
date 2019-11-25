@@ -1,5 +1,7 @@
 #include "physics.h"
 
+namespace gopher
+{
 void Physics::update(Uint32 deltamillis)
 {
     for (auto physent : this->physents)
@@ -51,4 +53,5 @@ void Physics::updateVelocity(Physent *physent)
     {
         physent->vel.y *= -1;
     }
+}
 }
