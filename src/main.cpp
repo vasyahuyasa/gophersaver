@@ -8,12 +8,13 @@
 #include <string>
 #include <iostream>
 #include <X11/Xlib.h>
+#include <signal.h>
 
 const int minVelocity = -500;
 const int maxVelocity = 500;
 const int minRotate = -180;
 const int maxRotate = 180;
-const char *screensaverName = "Gophersaver";
+const char *appname = "Gophersaver";
 
 using namespace gopher;
 
@@ -67,19 +68,6 @@ std::list<FlyObj *> loadEntitiesForRender(SDL_Renderer *render, int screenWidth,
     return entities;
 }
 
-bool needSetRootWindow(int argc, char *argv[])
-{
-    for (auto i = 1; i < argc; i++)
-    {
-        std::string arg = argv[i];
-        if (arg == "-root" || arg == "--root")
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 long unsigned int xscreensaveWindowId()
 {
     char *widEnv = getenv("XSCREENSAVER_WINDOW");
@@ -89,6 +77,16 @@ long unsigned int xscreensaveWindowId()
     }
 
     return strtol(widEnv, (char **)nullptr, 0);
+}
+
+windowSize *currentDisplaySize()
+{
+    SDL_DisplayMode mode;
+    if (SDL_GetCurrentDisplayMode(0, &mode) != 0)
+    {
+        return nullptr;
+    }
+    return new windowSize{mode.w, mode.h};
 }
 
 windowSize *getWindowSize(long unsigned int windowId)
@@ -103,6 +101,8 @@ windowSize *getWindowSize(long unsigned int windowId)
     Window window = (Window)windowId;
     XGetWindowAttributes(display, window, &windowAttributes);
     XCloseDisplay(display);
+
+    return new windowSize{windowAttributes.width, windowAttributes.height};
 }
 
 /**
@@ -113,31 +113,25 @@ SDL_Window *initWithXscreensaverWindow(long unsigned int xScreensaverWindowId)
     return SDL_CreateWindowFrom((void *)xScreensaverWindowId);
 }
 
-/**
- * Screensaver SDL root window hack
- * https://discourse.libsdl.org/t/drawing-on-the-root-window/1160/2
- */
-void setRootWindow()
+SDL_Window *fullscreenWindow(int width, int height)
 {
-    printf("xwid=%s\n", getenv("XSCREENSAVER_WINDOW"));
+    return SDL_CreateWindow(appname, 0, 0, width, height, SDL_WINDOW_FULLSCREEN_DESKTOP);
+}
 
-    char windowidEnv[32];
-    const char *display = std::getenv("DISPLAY");
-    Display *di = XOpenDisplay(display);
-    Window root = XDefaultRootWindow(di);
-    std::sprintf(windowidEnv, "%ld", root);
-    SDL_setenv("SDL_WINDOWID", windowidEnv, 1);
-    std::cout << "using root window id: " << root << std::endl;
+void exitImmediately(int sig)
+{
+    exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
 {
-    std::srand(unsigned(std::time(0)));
+    SDL_Window *win;
+    windowSize *ws;
 
-    if (needSetRootWindow(argc, argv))
-    {
-        setRootWindow();
-    }
+    signal(SIGINT, exitImmediately);
+    signal(SIGTERM, exitImmediately);
+
+    std::srand(unsigned(clock()));
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
     {
@@ -145,7 +139,22 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    
+    auto xwid = xscreensaveWindowId();
+    if (xwid > 0)
+    {
+        ws = getWindowSize(xwid);
+        win = initWithXscreensaverWindow(xwid);
+    }
+    else
+    {
+        ws = currentDisplaySize();
+        if (ws == nullptr)
+        {
+            printf("Can not get current display size\n");
+            return EXIT_FAILURE;
+        }
+        win = fullscreenWindow(ws->w, ws->h);
+    }
 
     /*
     SDL_DisplayMode displayMode;
@@ -154,11 +163,11 @@ int main(int argc, char *argv[])
         printf("SDL_GetCurrentDisplayMode Error: %s\n", SDL_GetError());
         return EXIT_FAILURE;
     }
-    */
+   
     auto screenWidth = displayMode.w;
     auto screenHeight = displayMode.h;
 
-    /*
+    
     SDL_Window *win = SDL_CreateWindow(screensaverName, 0, 0, screenWidth, screenHeight, SDL_WINDOW_FOREIGN);
     if (win == nullptr)
     {
@@ -174,11 +183,11 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    Physics *physics = new Physics(screenWidth, screenHeight);
+    Physics *physics = new Physics(ws->w, ws->h);
     Render *render = new Render(ren);
     Scene *scene = new Scene(render, physics);
 
-    for (auto entry : loadEntitiesForRender(ren, screenWidth, screenHeight))
+    for (auto entry : loadEntitiesForRender(ren, ws->w, ws->h))
     {
         render->addRenderable(entry);
         physics->addPhysent(entry);
